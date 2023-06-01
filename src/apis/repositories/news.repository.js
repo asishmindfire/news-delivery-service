@@ -22,4 +22,13 @@ module.exports = {
       .populate("agencyId", "logo")
       .populate("categoryId", "title");
   },
+
+  getLatestNews: async ({ query, limit }) => {
+    console.log(query, limit);
+    return await schemas.NewsFeed.find(query)
+      .sort({ publishedAt: -1 })
+      .limit(5)
+      .populate("agencyId", "logo")
+      .populate("categoryId", "title");
+  },
 };

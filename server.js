@@ -8,8 +8,13 @@ const http = require("http");
 let { RabbitMQConnect } = require("./src/rabbitmq/rabbitMQ");
 const { comsumeQueue } = require("./src/rabbitmq/Notification");
 
+const corsOptions = {
+  origin: "*",
+  methods: "POST, PUT, GET",
+};
+app.use(cors(corsOptions));
 app.use(helmet());
-app.use(cors());
+
 app.use(express.json());
 dotenv.config({ path: "./.env" });
 
@@ -26,20 +31,12 @@ const io = new Server(server, {
   },
 });
 
-// Connection to RabbitMQ
-RabbitMQConnect().then((data) => {
-  if (data) {
-    comsumeQueue(data).then(() => {
-      io.on("connection", (socket) => {
-        console.log(`Socket Connected: ${socket.id}`);
-        socket.emit("news_updated", { message: true });
-      });
-      return;
-    });
-    return;
-  }
-  throw new Error("RabbitMQ not connected!");
-});
+async function rabbitMQSetup() {
+  const channel = await RabbitMQConnect();
+  await comsumeQueue(channel, io);
+}
+
+rabbitMQSetup();
 
 app.use("/api/v1/news-feed", require("./src/apis/router/news/news.route"));
 app.use(
