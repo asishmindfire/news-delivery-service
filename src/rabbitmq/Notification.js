@@ -10,7 +10,7 @@ async function comsumeQueue(channel, io) {
       channel.ack(data);
       if (newsData.count > 0) {
         const latestNews = await newsRepository.getLatestNews({
-          query,
+          query: {},
           limit: newsData.count,
         });
         console.log(`latestNews`, latestNews);
