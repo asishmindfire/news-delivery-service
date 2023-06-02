@@ -7,10 +7,15 @@ services:
     restart: on-failure
     build:
       context: .
+    # deploy:
+    #   replicas: 2
     ports:
       - 8082:8082
     networks:
       - mongo-compass_mongo-network
+    labels:
+      - "traefik.enable=true" # <== Enable traefik to proxy this container
+      - "traefik.http.routers.news-delivery.rule=Host(`news-delivery.localhost`)"
 
 networks:
   mongo-compass_mongo-network:

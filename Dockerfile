@@ -1,11 +1,15 @@
 FROM node:alpine
 WORKDIR /app
-COPY package*.json ./
+COPY package.json ./
+COPY .npmrc .
+
+RUN npm install -f
 
 # COPY
 COPY . ./
 
-RUN npm install -f
+
+EXPOSE 8082
 
 # A command to start the server
 CMD ["npm", "start"]

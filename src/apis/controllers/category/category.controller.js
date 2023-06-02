@@ -2,6 +2,7 @@ const Services = require("../../services/category/category.service");
 
 exports.getCategoryController = async (req, res) => {
   try {
+    console.log("Category Api");
     const response = await Services.retrieveCategory();
     res.status(200).json({
       status: true,
